@@ -1,0 +1,26 @@
+<annotation>
+	<folder>test_images</folder>
+	<filename>test_00000761.jpg</filename>
+	<path>E:\face-mask-detection\test_images\test_00000761.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>400</width>
+		<height>400</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Face_Mask_Found</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>177</xmin>
+			<ymin>66</ymin>
+			<xmax>247</xmax>
+			<ymax>118</ymax>
+		</bndbox>
+	</object>
+</annotation>
