@@ -178,6 +178,7 @@ $RECYCLE.BIN/
 saved/
 labelImg-master/
 models-master/
+ml_project/
 
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,python
