@@ -10,7 +10,7 @@ Member:
 In this repo, we do object detection project using TensorFlow API to detect face masked.
 
 ## Datasets
-We use MAFA Datasets that originally store <a href="http://www.escience.cn/people/geshiming/mafa.html"> here</a>. It can be accessed in this <a href="https://drive.google.com/drive/folders/1nbtM1n0--iZ3VVbNGhocxbnBGhMau_OG"> drive</a>. 
+We use MAFA Datasets that originally store <a href="http://www.escience.cn/people/geshiming/mafa.html"> here</a>. It can be accessed in this <a href="https://www.dropbox.com/sh/mywlsu24e76jc96/AABck-OMCrgomjiSR_FIcrXza?dl=0"> dropbox</a>. 
 
 ## Training Steps
 1. Data Pre-processing:
