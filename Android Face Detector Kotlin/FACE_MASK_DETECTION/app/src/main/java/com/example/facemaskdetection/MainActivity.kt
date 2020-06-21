@@ -25,6 +25,8 @@ import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp
 import org.tensorflow.lite.support.label.TensorLabel
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+import java.lang.Float.min
+import kotlin.math.ceil
 
 
 class MainActivity : AppCompatActivity() {
@@ -51,17 +53,20 @@ class MainActivity : AppCompatActivity() {
                     image.id
                 )
 
-                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                var bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
                 } else {
                     MediaStore.Images.Media.getBitmap(contentResolver, uri)
                 }
-//
+
+                bitmap = Bitmap. createScaledBitmap(bitmap, 500, (bitmap.height / (bitmap.width/500F)).toInt(), true)
                 imageFoto.setImageBitmap(bitmap)
+                
                 val inputBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true )
 
+                // Get a Paint instance
                 val myRectPaint = Paint()
-                myRectPaint.strokeWidth = inputBitmap.width / 180F
+                myRectPaint.strokeWidth = 2F
                 myRectPaint.style = Paint.Style.STROKE
 
                 // Create a canvas using the dimensions from the image's bitmap
@@ -93,13 +98,31 @@ class MainActivity : AppCompatActivity() {
                     val bitmapCropped = Bitmap.createBitmap(inputBitmap,
                         left.toInt(),
                         top.toInt(),
-                        thisFace.width.toInt(),
-                        thisFace.height.toInt())
+                        if (right.toInt() > inputBitmap.width) {
+                            inputBitmap.width - left.toInt()
+                        } else {
+                            thisFace.width.toInt()
+                        },
+                        if (bottom.toInt() > inputBitmap.height) {
+                            inputBitmap.height - top.toInt()
+                        } else {
+                            thisFace.height.toInt()
+                        })
                     val label = predict(bitmapCropped)
-                    myRectPaint.setColor(Color.GREEN);
+                    var predictionn = ""
+                    val with = label["WithMask"]?: 0F
+                    val without = label["WithoutMask"]?: 0F
+
+                    if (with > without){
+                        myRectPaint.setColor(Color.GREEN)
+                        predictionn = "With Mask : " + String.format("%.1f", with*100) + "%"
+                    } else {
+                        myRectPaint.setColor(Color.RED)
+                        predictionn = "Without Mask : " + String.format("%.1f", without*100) + "%"
+                    }
                     myRectPaint.setTextSize(thisFace.width/8)
                     myRectPaint.setTextAlign(Align.LEFT)
-                    tempCanvas.drawText(label, left, top-9F, myRectPaint)
+                    tempCanvas.drawText(predictionn, left, top-9F, myRectPaint)
                     tempCanvas.drawRoundRect(RectF(left, top, right, bottom), 2F, 2F, myRectPaint)
                 }
                 imageFoto.setImageDrawable(BitmapDrawable(resources, tempBitmap))
@@ -109,43 +132,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun predict(input: Bitmap): String {
+    private fun predict(input: Bitmap): MutableMap<String, Float> {
         // load model
         val modelFile = FileUtil.loadMappedFile(this, "model.tflite")
-        val model = Interpreter(modelFile, Interpreter.Options())
+        val model = Interpreter(modelFile, Interpreter.Options()) 
         val labels = FileUtil.loadLabels(this, "labels.txt")
 
         // data type
-        val imageDataType = model.getInputTensor(0).dataType()
-        val inputShape = model.getInputTensor(0).shape()
+        val imageDataType = model.getInputTensor(0).dataType() 
+        val inputShape = model.getInputTensor(0).shape() 
 
-        val outputDataType = model.getOutputTensor(0).dataType()
-        val outputShape = model.getOutputTensor(0).shape()
+        val outputDataType = model.getOutputTensor(0).dataType() 
+        val outputShape = model.getOutputTensor(0).shape() 
 
         var inputImageBuffer = TensorImage(imageDataType)
-        val outputBuffer = TensorBuffer.createFixedSize(outputShape, outputDataType)
+        val outputBuffer = TensorBuffer.createFixedSize(outputShape, outputDataType) 
 
         // preprocess
         val cropSize = kotlin.math.min(input.width, input.height)
         val imageProcessor = ImageProcessor.Builder()
-            .add(ResizeWithCropOrPadOp(cropSize, cropSize))
-            .add(ResizeOp(inputShape[1], inputShape[2], ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
+            .add(ResizeWithCropOrPadOp(cropSize, cropSize)) 
+            .add(ResizeOp(inputShape[1], inputShape[2], ResizeOp.ResizeMethod.NEAREST_NEIGHBOR)) 
             .add(NormalizeOp(127.5f, 127.5f))
             .build()
 
         // load image
-        inputImageBuffer.load(input)
-        inputImageBuffer = imageProcessor.process(inputImageBuffer)
+        inputImageBuffer.load(input) 
+        inputImageBuffer = imageProcessor.process(inputImageBuffer) 
 
         // run model
-        model.run(inputImageBuffer.buffer, outputBuffer.buffer.rewind())
+        model.run(inputImageBuffer.buffer, outputBuffer.buffer.rewind()) 
 
         // get output
         val labelOutput = TensorLabel(labels, outputBuffer)
 
-        val label = labelOutput.mapWithFloatValue.maxBy { it.value }?.key
-        return label ?: " "
+        val label = labelOutput.mapWithFloatValue
+        return label
     }
 
 }
