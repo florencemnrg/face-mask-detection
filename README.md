@@ -11,7 +11,6 @@ Member:
 
 In this repo, we do object detection project using TensorFlow API to detect face masked.
 
-## Datasets
 We use MAFA Datasets that originally store <a href="https://www.kaggle.com/ashishjangra27/face-mask-12k-images-dataset"> here</a>. 
 
 ## How To Use
