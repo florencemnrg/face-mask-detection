@@ -2,9 +2,7 @@
 
 This repository contain our Final <a href="https://events.withgoogle.com/bangkit/">Bangk!t</a> group assignment.
 
-
 ![Live Demo](./SS_result/LiveDemo.gif)
-
 
 Member:  
 * [Cindy Alifia Putri](https://github.com/Cindyalifia)
@@ -43,7 +41,7 @@ Load and visualise some image to improve our analysis to the data.
 - Save weight **.h5 file** which you can found on Modelling directory. And don't forget to save **model.tflite** and also **label.txt** for deployment on Android which you can also look up on Modelling directory.
 
 ## Results
-Report of this project are available <a href=""> here</a> in the form of slides.
+Report of this project are available <a href="https://docs.google.com/presentation/d/1f8rBsyWy0dwbNoo38KHCDV3fDdPDemTBjKcoTFNMbIk/edit?usp=sharing"> here</a> in the form of slides.
 
 ## Model
 You can find the machine learning model in this directory : "modelling/model.05-0.00.h5". About prerequisite to android deployment file, you can found here : "modelling/tflite_model/labels.txt" and "modelling/tflite_model/model.tflite".
